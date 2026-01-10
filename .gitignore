@@ -1,0 +1,20 @@
+# WeChat Pay B2B SDK
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+.claude
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# pay.html
+pay.html
