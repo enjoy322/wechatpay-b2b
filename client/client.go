@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
+	"net/url"
 )
 
 // Client 封装访问微信 API 的 HTTP 客户端。
@@ -49,6 +50,22 @@ func (c *Client) GetPaySig(uri string, body []byte) string {
 // GetUserSignature 计算用户态签名，算法为 HMAC-SHA256(appKey, body)。
 func (c *Client) GetUserSignature(body []byte) string {
 	return GetUserSignature(body, c.appKey)
+}
+
+// BuildURIWithAuth 构建带 access_token 参数的 URI。
+func (c *Client) BuildURIWithAuth(uri string) string {
+	query := url.Values{}
+	query.Set("access_token", c.accessToken)
+	return uri + "?" + query.Encode()
+}
+
+// BuildURIWithAuthAndSig 构建带 access_token 和 pay_sig 参数的 URI。
+func (c *Client) BuildURIWithAuthAndSig(uri string, body []byte) string {
+	paySig := c.GetPaySig(uri, body)
+	query := url.Values{}
+	query.Set("access_token", c.accessToken)
+	query.Set("pay_sig", paySig)
+	return uri + "?" + query.Encode()
 }
 
 // GetPaySig 计算 pay_sig，算法为 HMAC-SHA256(appKey, uri+"&"+body)。

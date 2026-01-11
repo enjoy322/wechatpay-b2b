@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/enjoy322/wechatpay-b2b/client"
 	"github.com/enjoy322/wechatpay-b2b/types"
@@ -49,11 +48,7 @@ func (s *orderService) CloseOrder(ctx context.Context, req types.CloseOrderReque
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(closeOrderURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := closeOrderURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(closeOrderURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -93,11 +88,7 @@ func (s *orderService) GetOrder(ctx context.Context, req types.GetOrderRequest) 
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(getOrderURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := getOrderURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(getOrderURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {

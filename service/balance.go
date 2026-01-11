@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/enjoy322/wechatpay-b2b/client"
 	"github.com/enjoy322/wechatpay-b2b/types"
@@ -29,8 +28,8 @@ type balanceService struct {
 
 const (
 	getMchBalanceURI = "/retail/B2b/getmchbalance"
-	withdrawURI       = "/retail/B2b/withdraw"
-	queryWithdrawURI  = "/retail/B2b/querywithdraw"
+	withdrawURI      = "/retail/B2b/withdraw"
+	queryWithdrawURI = "/retail/B2b/querywithdraw"
 )
 
 // NewBalanceService 创建余额服务。
@@ -58,11 +57,7 @@ func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceReques
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(getMchBalanceURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := getMchBalanceURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(getMchBalanceURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -114,11 +109,7 @@ func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(withdrawURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := withdrawURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(withdrawURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -167,11 +158,7 @@ func (s *balanceService) QueryWithdraw(ctx context.Context, req types.QueryWithd
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(queryWithdrawURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := queryWithdrawURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(queryWithdrawURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {

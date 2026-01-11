@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/enjoy322/wechatpay-b2b/client"
 	"github.com/enjoy322/wechatpay-b2b/types"
@@ -61,11 +60,7 @@ func (s *refundService) CreateRefund(ctx context.Context, req types.RefundReques
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(createRefundURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := createRefundURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(createRefundURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -114,11 +109,7 @@ func (s *refundService) GetRefund(ctx context.Context, req types.GetRefundReques
 		return nil, err
 	}
 
-	paySig := s.client.GetPaySig(getRefundURI, body)
-	query := url.Values{}
-	query.Set("access_token", s.client.GetAccessToken())
-	query.Set("pay_sig", paySig)
-	uri := getRefundURI + "?" + query.Encode()
+	uri := s.client.BuildURIWithAuthAndSig(getRefundURI, body)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
