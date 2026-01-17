@@ -16,7 +16,7 @@ go get github.com/enjoy322/wechatpay-b2b
 ## 官方文档
 
 - 文档：<https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/industry/B2b_store_assistant.html>
-- 申请商户号：<https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/industry/B2b_store_assistant.html#_3-1-%E7%94%B3%E8%AF%B7%E5%95%86%E6%88%B7%E5%8F%B7>
+- 获取小程序下所有商户的信息：<https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/industry/B2b_store_assistant.html#_8-%E8%8E%B7%E5%8F%96%E5%B0%8F%E7%A8%8B%E5%BA%8F%E4%B8%8B%E6%89%80%E6%9C%89%E5%95%86%E6%88%B7%E7%9A%84%E4%BF%A1%E6%81%AF>
 
 ## 支持的接口
 
@@ -24,8 +24,7 @@ go get github.com/enjoy322/wechatpay-b2b
 
 | 方法 | 功能 | URI |
 |-----|-----|-----|
-| `RegisterMerchant` | 申请商户号 | `/retail/B2b/retailregistermch` |
-| `GetMerchantOpenStatus` | 查询商户号开通状态 | `/retail/B2b/retailgetmchorder` |
+| `GetMerchantInfo` | 获取小程序下所有商户的信息 | `/retail/B2b/getmchinfo` |
 
 ### 订单服务 (OrderService)
 

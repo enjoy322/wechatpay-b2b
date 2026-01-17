@@ -12,12 +12,10 @@ import (
 	"github.com/enjoy322/wechatpay-b2b/types"
 )
 
-// MerchantService 处理商户号进件与状态查询相关接口调用。
+// MerchantService 处理商户信息查询相关接口调用。
 type MerchantService interface {
-	// RegisterMerchant 商户号进件。
-	RegisterMerchant(ctx context.Context, req types.RegisterMerchantRequest) (*types.RegisterMerchantResponse, error)
-	// GetMerchantOpenStatus 查询商户号开通状态。
-	GetMerchantOpenStatus(ctx context.Context, req types.GetMerchantOpenStatusRequest) (*types.GetMerchantOpenStatusResponse, error)
+	// GetMerchantInfo 获取小程序下所有商户的信息。
+	GetMerchantInfo(ctx context.Context, req types.GetMerchantInfoRequest) (*types.GetMerchantInfoResponse, error)
 }
 
 type merchantService struct {
@@ -25,17 +23,16 @@ type merchantService struct {
 }
 
 const (
-	registerMerchantURI  = "/retail/B2b/retailregistermch"
-	getMerchantStatusURI = "/retail/B2b/retailgetmchorder"
+	getMerchantInfoURI = "/retail/B2b/getmchinfo"
 )
 
-// NewMerchantService 创建商户号进件服务。
+// NewMerchantService 创建商户信息服务。
 func NewMerchantService(c *client.Client) MerchantService {
 	return &merchantService{client: c}
 }
 
-// RegisterMerchant 商户号进件。
-func (s *merchantService) RegisterMerchant(ctx context.Context, req types.RegisterMerchantRequest) (*types.RegisterMerchantResponse, error) {
+// GetMerchantInfo 获取小程序下所有商户的信息。
+func (s *merchantService) GetMerchantInfo(ctx context.Context, req types.GetMerchantInfoRequest) (*types.GetMerchantInfoResponse, error) {
 	if s == nil || s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -48,7 +45,7 @@ func (s *merchantService) RegisterMerchant(ctx context.Context, req types.Regist
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuth(registerMerchantURI)
+	uri := s.client.BuildURIWithAuth(getMerchantInfoURI)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -64,47 +61,7 @@ func (s *merchantService) RegisterMerchant(ctx context.Context, req types.Regist
 		return nil, fmt.Errorf("wechat api http status %d: %s", resp.StatusCode, string(raw))
 	}
 
-	var out types.RegisterMerchantResponse
-	if err := json.Unmarshal(raw, &out); err != nil {
-		return nil, err
-	}
-	if out.ErrCode != 0 {
-		return &out, fmt.Errorf("wechat api error: errcode=%d errmsg=%s", out.ErrCode, out.ErrMsg)
-	}
-	return &out, nil
-}
-
-// GetMerchantOpenStatus 查询商户号开通状态。
-func (s *merchantService) GetMerchantOpenStatus(ctx context.Context, req types.GetMerchantOpenStatusRequest) (*types.GetMerchantOpenStatusResponse, error) {
-	if s == nil || s.client == nil {
-		return nil, errors.New("client is nil")
-	}
-	if s.client.GetAccessToken() == "" {
-		return nil, errors.New("accessToken is empty")
-	}
-
-	body, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	uri := s.client.BuildURIWithAuth(getMerchantStatusURI)
-
-	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	raw, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return nil, fmt.Errorf("wechat api http status %d: %s", resp.StatusCode, string(raw))
-	}
-
-	var out types.GetMerchantOpenStatusResponse
+	var out types.GetMerchantInfoResponse
 	if err := json.Unmarshal(raw, &out); err != nil {
 		return nil, err
 	}

@@ -167,3 +167,24 @@ type MerchantWqfRegisterStatement struct {
 	WqfRegisterStateDesc string `json:"wqf_register_state_desc"`
 	RequestNo            string `json:"request_no,omitempty"`
 }
+
+// GetMerchantInfoRequest 获取小程序下所有商户信息请求参数。
+type GetMerchantInfoRequest struct{}
+
+// GetMerchantInfoResponse 获取小程序下所有商户信息返回参数。
+type GetMerchantInfoResponse struct {
+	MchList []MerchantInfoDetail `json:"mch_list"`
+	Total   uint32               `json:"total"`
+	ErrCode int                  `json:"errcode"`
+	ErrMsg  string               `json:"errmsg"`
+}
+
+// MerchantInfoDetail 商户信息明细。
+type MerchantInfoDetail struct {
+	SubMchid           string `json:"sub_mchid"`
+	CompanyName        string `json:"company_name"`
+	BankName           string `json:"bank_name"`
+	BankAccount        string `json:"bank_account"`
+	WxPayStatus        string `json:"wxpay_status"`
+	BankTransferStatus string `json:"bank_transfer_status"`
+}
