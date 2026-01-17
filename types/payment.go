@@ -56,8 +56,8 @@ type CombinedPaymentSignData struct {
 
 // CommonPaymentParams 返回给小程序 wx.requestCommonPayment 的参数集。
 type CommonPaymentParams struct {
-	SignData  string `json:"signData"`
+	SignData  string `json:"sign_data"`
 	Mode      string `json:"mode"`
-	PaySig    string `json:"paySig"`
+	PaySig    string `json:"pay_sig"`
 	Signature string `json:"signature"`
 }
