@@ -25,6 +25,7 @@ go get github.com/enjoy322/wechatpay-b2b
 | 方法 | 功能 | URI |
 |-----|-----|-----|
 | `GetMerchantInfo` | 获取小程序下所有商户的信息 | `/retail/B2b/getmchinfo` |
+| `GetMerchantAppKey` | 查询商户的 appKey | `/retail/B2b/getappkey` |
 
 ### 订单服务 (OrderService)
 

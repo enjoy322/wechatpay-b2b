@@ -168,6 +168,19 @@ type MerchantWqfRegisterStatement struct {
 	RequestNo            string `json:"request_no,omitempty"`
 }
 
+// GetMerchantAppKeyRequest 查询商户的 appKey 请求参数。
+type GetMerchantAppKeyRequest struct {
+	Mchid string `json:"mchid"`
+}
+
+// GetMerchantAppKeyResponse 查询商户的 appKey 返回参数。
+type GetMerchantAppKeyResponse struct {
+	AppKey        string `json:"appkey"`
+	SandboxAppKey string `json:"sandbox_appkey"`
+	ErrCode       int    `json:"errcode"`
+	ErrMsg        string `json:"errmsg"`
+}
+
 // GetMerchantInfoRequest 获取小程序下所有商户信息请求参数。
 type GetMerchantInfoRequest struct{}
 
