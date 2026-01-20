@@ -12,7 +12,7 @@ import (
 // PaymentService 负责构建小程序支付相关参数。
 type PaymentService interface {
 	// BuildPaymentParams 生成单订单支付参数，用于小程序 wx.requestCommonPayment。
-	BuildPaymentParams(ctx context.Context, req types.Order, sessionKey string) (*types.CommonPaymentParams, error)
+	BuildPaymentParams(ctx context.Context, req types.Order, sessionKey string, appKey string) (*types.CommonPaymentParams, error)
 	// BuildCombinedPaymentParams 生成合单支付参数，用于小程序 wx.requestCommonPayment。
 	BuildCombinedPaymentParams(ctx context.Context, req types.CombinedPaymentSignData, sessionKey string) (*types.CommonPaymentParams, error)
 }
@@ -33,11 +33,11 @@ func NewPaymentService(c *client.Client) PaymentService {
 }
 
 // BuildPaymentParams 生成单订单支付参数，用于小程序 wx.requestCommonPayment。
-func (s *paymentService) BuildPaymentParams(ctx context.Context, req types.Order, sessionKey string) (*types.CommonPaymentParams, error) {
+func (s *paymentService) BuildPaymentParams(ctx context.Context, req types.Order, sessionKey string, appKey string) (*types.CommonPaymentParams, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 	if sessionKey == "" {
@@ -52,7 +52,7 @@ func (s *paymentService) BuildPaymentParams(ctx context.Context, req types.Order
 	return &types.CommonPaymentParams{
 		SignData:  string(body),
 		Mode:      paymentModeGoods,
-		PaySig:    s.client.GetPaySig(requestCommonPaymentURI, body),
+		PaySig:    s.client.GetPaySig(requestCommonPaymentURI, body, appKey),
 		Signature: s.client.GetUserSignature(body, sessionKey),
 	}, nil
 }
@@ -62,9 +62,7 @@ func (s *paymentService) BuildCombinedPaymentParams(ctx context.Context, req typ
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
-	if s.client.GetAppKey() == "" {
-		return nil, errors.New("appKey is empty")
-	}
+
 	if sessionKey == "" {
 		return nil, errors.New("sessionKey is empty")
 	}
@@ -84,8 +82,10 @@ func (s *paymentService) BuildCombinedPaymentParams(ctx context.Context, req typ
 
 	paySigItems := make([]paySigItem, 0, len(req.CombinedOrderList))
 	for _, order := range req.CombinedOrderList {
-
-		paySigPer := s.client.GetPaySig(requestCommonPaymentURI, body)
+		if order.Mchid == "" {
+			return nil, errors.New("mchid is required")
+		}
+		paySigPer := s.client.GetPaySig(requestCommonPaymentURI, body, order.AppKey)
 
 		paySigItems = append(paySigItems, paySigItem{
 			Mchid:  order.Mchid,

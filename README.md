@@ -74,15 +74,15 @@ go get github.com/enjoy322/wechatpay-b2b
 
 ## 使用说明
 
-### Client 配置（access_token / appKey）
+### Client 配置（access_token / appKey 传参）
 
 本 SDK 以 `client.Client` 作为共享调用上下文：
 
-- `access_token`：保存在 `client.Client.AccessToken`，业务侧定时刷新并更新即可。
-- `appKey`：保存在 `client.Client.AppKey`，用于服务端接口计算 `pay_sig`（建议按商户号维度维护不同的 `client.Client` 实例）。
+- `access_token`：保存在 `client.Client` 内，业务侧定时刷新并更新即可。
+- `appKey`：不保存在 `client.Client` 内，调用需要 `pay_sig` 的服务时传入（建议按商户号维度维护 `map[mchid]appKey`）。
 - `session_key`：不保存在 `client.Client` 内，调用 `PaymentService.BuildPaymentParams` / `BuildCombinedPaymentParams` 时传入，用于计算 `signature`。
 
-因此调用 `service.BalanceService.GetBalance` 等方法时，不需要每次显式传入 `access_token` / `appKey`，只需确保 `client.Client` 内的相关字段是最新的。
+因此调用 `service.BalanceService.GetBalance` 等方法时，需要显式传入 `appKey`，但 `access_token` 只需在 `client.Client` 内保持最新即可。
 
 建议直接替换整个 `client.Client` 实例。
 
@@ -102,11 +102,14 @@ import (
 
 func main() {
     // 初始化客户端
-    c := client.NewClient(client.Options{
-        BaseURL:       "https://api.weixin.qq.com",
-        TokenProvider: "your_access_token",
-        AppKeyProvider: "your_app_key",
+    c, err := client.NewClient(client.Options{
+        BaseURL:     "https://api.weixin.qq.com",
+        AccessToken: "your_access_token",
     })
+    if err != nil {
+        panic(err)
+    }
+    appKey := "your_app_key"
 
     // 创建服务
     orderSvc := service.NewOrderService(c)
@@ -115,7 +118,7 @@ func main() {
     resp, err := orderSvc.GetOrder(context.Background(), types.GetOrderRequest{
         Mchid:      "1230000109",
         OutTradeNo: "your_out_trade_no",
-    })
+    }, appKey)
     if err != nil {
         panic(err)
     }

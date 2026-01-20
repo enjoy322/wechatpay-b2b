@@ -15,9 +15,9 @@ import (
 // RefundService 处理退款申请与退款查询。
 type RefundService interface {
 	// CreateRefund 发起退款。
-	CreateRefund(ctx context.Context, req types.RefundRequest) (*types.RefundResponse, error)
+	CreateRefund(ctx context.Context, req types.RefundRequest, appKey string) (*types.RefundResponse, error)
 	// GetRefund 查询退款。
-	GetRefund(ctx context.Context, req types.GetRefundRequest) (*types.GetRefundResponse, error)
+	GetRefund(ctx context.Context, req types.GetRefundRequest, appKey string) (*types.GetRefundResponse, error)
 }
 
 type refundService struct {
@@ -35,7 +35,7 @@ func NewRefundService(c *client.Client) RefundService {
 }
 
 // CreateRefund 发起退款。
-func (s *refundService) CreateRefund(ctx context.Context, req types.RefundRequest) (*types.RefundResponse, error) {
+func (s *refundService) CreateRefund(ctx context.Context, req types.RefundRequest, appKey string) (*types.RefundResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -51,7 +51,7 @@ func (s *refundService) CreateRefund(ctx context.Context, req types.RefundReques
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -60,7 +60,7 @@ func (s *refundService) CreateRefund(ctx context.Context, req types.RefundReques
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(createRefundURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(createRefundURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -87,7 +87,7 @@ func (s *refundService) CreateRefund(ctx context.Context, req types.RefundReques
 }
 
 // GetRefund 查询退款。
-func (s *refundService) GetRefund(ctx context.Context, req types.GetRefundRequest) (*types.GetRefundResponse, error) {
+func (s *refundService) GetRefund(ctx context.Context, req types.GetRefundRequest, appKey string) (*types.GetRefundResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -100,7 +100,7 @@ func (s *refundService) GetRefund(ctx context.Context, req types.GetRefundReques
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -109,7 +109,7 @@ func (s *refundService) GetRefund(ctx context.Context, req types.GetRefundReques
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(getRefundURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(getRefundURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {

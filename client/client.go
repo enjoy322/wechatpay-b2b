@@ -14,18 +14,12 @@ import (
 type Client struct {
 	baseURL     string
 	accessToken string // access_token
-	appKey      string // appKey（用于计算 pay_sig）
 	httpClient  *http.Client
 }
 
 // GetAccessToken 获取 access_token。
 func (c *Client) GetAccessToken() string {
 	return c.accessToken
-}
-
-// GetAppKey 获取 appKey。
-func (c *Client) GetAppKey() string {
-	return c.appKey
 }
 
 // Do 向指定 uri（路径，不含完整域名）发起 HTTP 请求。
@@ -43,8 +37,8 @@ func (c *Client) Do(ctx context.Context, method, uri string, body []byte) (*http
 }
 
 // GetPaySig 计算 pay_sig，算法为 HMAC-SHA256(appKey, uri+"&"+body)。
-func (c *Client) GetPaySig(uri string, body []byte) string {
-	return GetPaySig(uri, body, c.appKey)
+func (c *Client) GetPaySig(uri string, body []byte, appKey string) string {
+	return GetPaySig(uri, body, appKey)
 }
 
 // GetUserSignature 计算用户态签名，算法为 HMAC-SHA256(sessionKey, body)。
@@ -60,8 +54,8 @@ func (c *Client) BuildURIWithAuth(uri string) string {
 }
 
 // BuildURIWithAuthAndSig 构建带 access_token 和 pay_sig 参数的 URI。
-func (c *Client) BuildURIWithAuthAndSig(uri string, body []byte) string {
-	paySig := c.GetPaySig(uri, body)
+func (c *Client) BuildURIWithAuthAndSig(uri string, body []byte, appKey string) string {
+	paySig := c.GetPaySig(uri, body, appKey)
 	query := url.Values{}
 	query.Set("access_token", c.accessToken)
 	query.Set("pay_sig", paySig)

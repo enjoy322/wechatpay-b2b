@@ -15,9 +15,9 @@ import (
 // OrderService 处理订单查询、关单相关调用。
 type OrderService interface {
 	// CloseOrder 关闭订单。
-	CloseOrder(ctx context.Context, req types.CloseOrderRequest) (*types.CloseOrderResponse, error)
+	CloseOrder(ctx context.Context, req types.CloseOrderRequest, appKey string) (*types.CloseOrderResponse, error)
 	// GetOrder 查询订单。
-	GetOrder(ctx context.Context, req types.GetOrderRequest) (*types.GetOrderResponse, error)
+	GetOrder(ctx context.Context, req types.GetOrderRequest, appKey string) (*types.GetOrderResponse, error)
 }
 
 type orderService struct {
@@ -35,12 +35,15 @@ func NewOrderService(c *client.Client) OrderService {
 }
 
 // CloseOrder 关闭订单。
-func (s *orderService) CloseOrder(ctx context.Context, req types.CloseOrderRequest) (*types.CloseOrderResponse, error) {
+func (s *orderService) CloseOrder(ctx context.Context, req types.CloseOrderRequest, appKey string) (*types.CloseOrderResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
 	if req.Mchid == "" {
 		return nil, errors.New("mchid is required")
+	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
 	}
 
 	body, err := json.Marshal(req)
@@ -48,7 +51,7 @@ func (s *orderService) CloseOrder(ctx context.Context, req types.CloseOrderReque
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(closeOrderURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(closeOrderURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -75,12 +78,15 @@ func (s *orderService) CloseOrder(ctx context.Context, req types.CloseOrderReque
 }
 
 // GetOrder 查询订单。
-func (s *orderService) GetOrder(ctx context.Context, req types.GetOrderRequest) (*types.GetOrderResponse, error) {
+func (s *orderService) GetOrder(ctx context.Context, req types.GetOrderRequest, appKey string) (*types.GetOrderResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
 	if req.Mchid == "" {
 		return nil, errors.New("mchid is required")
+	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
 	}
 
 	body, err := json.Marshal(req)
@@ -88,7 +94,7 @@ func (s *orderService) GetOrder(ctx context.Context, req types.GetOrderRequest) 
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(getOrderURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(getOrderURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {

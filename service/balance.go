@@ -15,11 +15,11 @@ import (
 // BalanceService 处理余额查询与提现流程。
 type BalanceService interface {
 	// GetBalance 查询账户余额。
-	GetBalance(ctx context.Context, req types.BalanceRequest) (*types.BalanceResponse, error)
+	GetBalance(ctx context.Context, req types.BalanceRequest, appKey string) (*types.BalanceResponse, error)
 	// Withdraw 发起提现。
-	Withdraw(ctx context.Context, req types.WithdrawRequest) (*types.WithdrawResponse, error)
+	Withdraw(ctx context.Context, req types.WithdrawRequest, appKey string) (*types.WithdrawResponse, error)
 	// QueryWithdraw 查询提现状态。
-	QueryWithdraw(ctx context.Context, req types.QueryWithdrawRequest) (*types.QueryWithdrawResponse, error)
+	QueryWithdraw(ctx context.Context, req types.QueryWithdrawRequest, appKey string) (*types.QueryWithdrawResponse, error)
 }
 
 type balanceService struct {
@@ -38,7 +38,7 @@ func NewBalanceService(c *client.Client) BalanceService {
 }
 
 // GetBalance 查询账户余额。
-func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceRequest) (*types.BalanceResponse, error) {
+func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceRequest, appKey string) (*types.BalanceResponse, error) {
 	if s == nil || s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -48,7 +48,7 @@ func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceReques
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -57,7 +57,7 @@ func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceReques
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(getMchBalanceURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(getMchBalanceURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *balanceService) GetBalance(ctx context.Context, req types.BalanceReques
 }
 
 // Withdraw 发起提现。
-func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest) (*types.WithdrawResponse, error) {
+func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest, appKey string) (*types.WithdrawResponse, error) {
 	if s == nil || s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -100,7 +100,7 @@ func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -109,7 +109,7 @@ func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(withdrawURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(withdrawURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -136,7 +136,7 @@ func (s *balanceService) Withdraw(ctx context.Context, req types.WithdrawRequest
 }
 
 // QueryWithdraw 查询提现状态。
-func (s *balanceService) QueryWithdraw(ctx context.Context, req types.QueryWithdrawRequest) (*types.QueryWithdrawResponse, error) {
+func (s *balanceService) QueryWithdraw(ctx context.Context, req types.QueryWithdrawRequest, appKey string) (*types.QueryWithdrawResponse, error) {
 	if s == nil || s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -149,7 +149,7 @@ func (s *balanceService) QueryWithdraw(ctx context.Context, req types.QueryWithd
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -158,7 +158,7 @@ func (s *balanceService) QueryWithdraw(ctx context.Context, req types.QueryWithd
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(queryWithdrawURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(queryWithdrawURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {

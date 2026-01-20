@@ -15,6 +15,7 @@ type Order struct {
 // CombinedOrder 表示合单中的子单参数。
 type CombinedOrder struct {
 	Mchid        string       `json:"mchid"`
+	AppKey       string       `json:"app_key"`
 	OutTradeNo   string       `json:"out_trade_no"`
 	Description  string       `json:"description"`
 	Amount       Amount       `json:"amount"`

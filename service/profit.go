@@ -15,23 +15,23 @@ import (
 // ProfitService 处理分账相关调用。
 type ProfitService interface {
 	// ProfitSharing 请求分账。
-	ProfitSharing(ctx context.Context, req types.ProfitSharingRequest) (*types.ProfitSharingResponse, error)
+	ProfitSharing(ctx context.Context, req types.ProfitSharingRequest, appKey string) (*types.ProfitSharingResponse, error)
 	// QueryProfitSharing 查询分账订单。
-	QueryProfitSharing(ctx context.Context, req types.QueryProfitSharingRequest) (*types.QueryProfitSharingResponse, error)
+	QueryProfitSharing(ctx context.Context, req types.QueryProfitSharingRequest, appKey string) (*types.QueryProfitSharingResponse, error)
 	// ProfitSharingFinish 分账完结。
-	ProfitSharingFinish(ctx context.Context, req types.ProfitSharingFinishRequest) (*types.ProfitSharingFinishResponse, error)
+	ProfitSharingFinish(ctx context.Context, req types.ProfitSharingFinishRequest, appKey string) (*types.ProfitSharingFinishResponse, error)
 	// ProfitSharingReturn 分账回退。
-	ProfitSharingReturn(ctx context.Context, req types.ProfitSharingReturnRequest) (*types.ProfitSharingReturnResponse, error)
+	ProfitSharingReturn(ctx context.Context, req types.ProfitSharingReturnRequest, appKey string) (*types.ProfitSharingReturnResponse, error)
 	// QueryProfitSharingReturn 查询分账回退。
-	QueryProfitSharingReturn(ctx context.Context, req types.QueryProfitSharingReturnRequest) (*types.QueryProfitSharingReturnResponse, error)
+	QueryProfitSharingReturn(ctx context.Context, req types.QueryProfitSharingReturnRequest, appKey string) (*types.QueryProfitSharingReturnResponse, error)
 	// AddProfitSharingAccount 添加分账方。
-	AddProfitSharingAccount(ctx context.Context, req types.AddProfitSharingAccountRequest) (*types.AddProfitSharingAccountResponse, error)
+	AddProfitSharingAccount(ctx context.Context, req types.AddProfitSharingAccountRequest, appKey string) (*types.AddProfitSharingAccountResponse, error)
 	// DelProfitSharingAccount 删除分账方。
-	DelProfitSharingAccount(ctx context.Context, req types.DelProfitSharingAccountRequest) (*types.DelProfitSharingAccountResponse, error)
+	DelProfitSharingAccount(ctx context.Context, req types.DelProfitSharingAccountRequest, appKey string) (*types.DelProfitSharingAccountResponse, error)
 	// QueryProfitSharingAccount 查询分账方。
-	QueryProfitSharingAccount(ctx context.Context, req types.QueryProfitSharingAccountRequest) (*types.QueryProfitSharingAccountResponse, error)
+	QueryProfitSharingAccount(ctx context.Context, req types.QueryProfitSharingAccountRequest, appKey string) (*types.QueryProfitSharingAccountResponse, error)
 	// QueryProfitSharingRemainAmt 查询分账剩余金额。
-	QueryProfitSharingRemainAmt(ctx context.Context, req types.QueryProfitSharingRemainAmtRequest) (*types.QueryProfitSharingRemainAmtResponse, error)
+	QueryProfitSharingRemainAmt(ctx context.Context, req types.QueryProfitSharingRemainAmtRequest, appKey string) (*types.QueryProfitSharingRemainAmtResponse, error)
 }
 
 type profitService struct {
@@ -56,7 +56,7 @@ func NewProfitService(c *client.Client) ProfitService {
 }
 
 // ProfitSharing 请求分账。
-func (s *profitService) ProfitSharing(ctx context.Context, req types.ProfitSharingRequest) (*types.ProfitSharingResponse, error) {
+func (s *profitService) ProfitSharing(ctx context.Context, req types.ProfitSharingRequest, appKey string) (*types.ProfitSharingResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -75,7 +75,7 @@ func (s *profitService) ProfitSharing(ctx context.Context, req types.ProfitShari
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -84,7 +84,7 @@ func (s *profitService) ProfitSharing(ctx context.Context, req types.ProfitShari
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(profitSharingURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(profitSharingURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -111,7 +111,7 @@ func (s *profitService) ProfitSharing(ctx context.Context, req types.ProfitShari
 }
 
 // QueryProfitSharing 查询分账订单。
-func (s *profitService) QueryProfitSharing(ctx context.Context, req types.QueryProfitSharingRequest) (*types.QueryProfitSharingResponse, error) {
+func (s *profitService) QueryProfitSharing(ctx context.Context, req types.QueryProfitSharingRequest, appKey string) (*types.QueryProfitSharingResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -124,7 +124,7 @@ func (s *profitService) QueryProfitSharing(ctx context.Context, req types.QueryP
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -133,7 +133,7 @@ func (s *profitService) QueryProfitSharing(ctx context.Context, req types.QueryP
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -160,7 +160,7 @@ func (s *profitService) QueryProfitSharing(ctx context.Context, req types.QueryP
 }
 
 // ProfitSharingFinish 分账完结。
-func (s *profitService) ProfitSharingFinish(ctx context.Context, req types.ProfitSharingFinishRequest) (*types.ProfitSharingFinishResponse, error) {
+func (s *profitService) ProfitSharingFinish(ctx context.Context, req types.ProfitSharingFinishRequest, appKey string) (*types.ProfitSharingFinishResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -176,7 +176,7 @@ func (s *profitService) ProfitSharingFinish(ctx context.Context, req types.Profi
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -185,7 +185,7 @@ func (s *profitService) ProfitSharingFinish(ctx context.Context, req types.Profi
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(profitSharingFinishURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(profitSharingFinishURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -212,7 +212,7 @@ func (s *profitService) ProfitSharingFinish(ctx context.Context, req types.Profi
 }
 
 // ProfitSharingReturn 分账回退。
-func (s *profitService) ProfitSharingReturn(ctx context.Context, req types.ProfitSharingReturnRequest) (*types.ProfitSharingReturnResponse, error) {
+func (s *profitService) ProfitSharingReturn(ctx context.Context, req types.ProfitSharingReturnRequest, appKey string) (*types.ProfitSharingReturnResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -234,7 +234,7 @@ func (s *profitService) ProfitSharingReturn(ctx context.Context, req types.Profi
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -243,7 +243,7 @@ func (s *profitService) ProfitSharingReturn(ctx context.Context, req types.Profi
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(profitSharingReturnURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(profitSharingReturnURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -270,7 +270,7 @@ func (s *profitService) ProfitSharingReturn(ctx context.Context, req types.Profi
 }
 
 // QueryProfitSharingReturn 查询分账回退。
-func (s *profitService) QueryProfitSharingReturn(ctx context.Context, req types.QueryProfitSharingReturnRequest) (*types.QueryProfitSharingReturnResponse, error) {
+func (s *profitService) QueryProfitSharingReturn(ctx context.Context, req types.QueryProfitSharingReturnRequest, appKey string) (*types.QueryProfitSharingReturnResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -283,7 +283,7 @@ func (s *profitService) QueryProfitSharingReturn(ctx context.Context, req types.
 	if s.client.GetAccessToken() == "" {
 		return nil, errors.New("accessToken is empty")
 	}
-	if s.client.GetAppKey() == "" {
+	if appKey == "" {
 		return nil, errors.New("appKey is empty")
 	}
 
@@ -292,7 +292,7 @@ func (s *profitService) QueryProfitSharingReturn(ctx context.Context, req types.
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingReturn, body)
+	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingReturn, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -319,7 +319,7 @@ func (s *profitService) QueryProfitSharingReturn(ctx context.Context, req types.
 }
 
 // AddProfitSharingAccount 添加分账方。
-func (s *profitService) AddProfitSharingAccount(ctx context.Context, req types.AddProfitSharingAccountRequest) (*types.AddProfitSharingAccountResponse, error) {
+func (s *profitService) AddProfitSharingAccount(ctx context.Context, req types.AddProfitSharingAccountRequest, appKey string) (*types.AddProfitSharingAccountResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -338,13 +338,16 @@ func (s *profitService) AddProfitSharingAccount(ctx context.Context, req types.A
 	if req.PayeeName == "" {
 		return nil, errors.New("payee_name is required")
 	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
+	}
 
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(addProfitSharingAccountURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(addProfitSharingAccountURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -371,7 +374,7 @@ func (s *profitService) AddProfitSharingAccount(ctx context.Context, req types.A
 }
 
 // DelProfitSharingAccount 删除分账方。
-func (s *profitService) DelProfitSharingAccount(ctx context.Context, req types.DelProfitSharingAccountRequest) (*types.DelProfitSharingAccountResponse, error) {
+func (s *profitService) DelProfitSharingAccount(ctx context.Context, req types.DelProfitSharingAccountRequest, appKey string) (*types.DelProfitSharingAccountResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -384,13 +387,16 @@ func (s *profitService) DelProfitSharingAccount(ctx context.Context, req types.D
 	if req.PayeeID == "" {
 		return nil, errors.New("payee_id is required")
 	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
+	}
 
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(delProfitSharingAccountURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(delProfitSharingAccountURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -417,7 +423,7 @@ func (s *profitService) DelProfitSharingAccount(ctx context.Context, req types.D
 }
 
 // QueryProfitSharingAccount 查询分账方。
-func (s *profitService) QueryProfitSharingAccount(ctx context.Context, req types.QueryProfitSharingAccountRequest) (*types.QueryProfitSharingAccountResponse, error) {
+func (s *profitService) QueryProfitSharingAccount(ctx context.Context, req types.QueryProfitSharingAccountRequest, appKey string) (*types.QueryProfitSharingAccountResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -430,13 +436,16 @@ func (s *profitService) QueryProfitSharingAccount(ctx context.Context, req types
 	if req.Limit <= 0 || req.Limit > 100 {
 		return nil, errors.New("limit must be between 1 and 100")
 	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
+	}
 
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingAccountURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingAccountURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
@@ -463,7 +472,7 @@ func (s *profitService) QueryProfitSharingAccount(ctx context.Context, req types
 }
 
 // QueryProfitSharingRemainAmt 查询分账剩余金额。
-func (s *profitService) QueryProfitSharingRemainAmt(ctx context.Context, req types.QueryProfitSharingRemainAmtRequest) (*types.QueryProfitSharingRemainAmtResponse, error) {
+func (s *profitService) QueryProfitSharingRemainAmt(ctx context.Context, req types.QueryProfitSharingRemainAmtRequest, appKey string) (*types.QueryProfitSharingRemainAmtResponse, error) {
 	if s.client == nil {
 		return nil, errors.New("client is nil")
 	}
@@ -473,13 +482,16 @@ func (s *profitService) QueryProfitSharingRemainAmt(ctx context.Context, req typ
 	if req.OutTradeNo == "" {
 		return nil, errors.New("out_trade_no is required")
 	}
+	if appKey == "" {
+		return nil, errors.New("appKey is empty")
+	}
 
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingRemainAmtURI, body)
+	uri := s.client.BuildURIWithAuthAndSig(queryProfitSharingRemainAmtURI, body, appKey)
 
 	resp, err := s.client.Do(ctx, http.MethodPost, uri, body)
 	if err != nil {
