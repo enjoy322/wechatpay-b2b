@@ -35,7 +35,7 @@ type QueryProfitSharingResponse struct {
 // ProfitSharingFinishRequest 分账完结参数。
 type ProfitSharingFinishRequest struct {
 	Mchid      string `json:"mchid"`        // 微信商户号
-	OutOrderNo string `json:"out_order_no"` // 商户分账订单号
+	OutTradeNo string `json:"out_trade_no"` // 商户支付订单号
 }
 
 // ProfitSharingFinishResponse 分账完结返回参数。
