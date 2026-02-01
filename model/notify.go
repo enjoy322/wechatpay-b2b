@@ -5,8 +5,8 @@ type PaymentNotify struct {
 	ToUserName         string        `json:"ToUserName"`           // 公众号/小程序ID
 	FromUserName       string        `json:"FromUserName"`         // 用户OpenID
 	CreateTime         int64         `json:"CreateTime"`           // 创建时间
-	MsgType            string        `json:"MsgType"`              // 消息类型
-	Event              string        `json:"Event"`                // 事件类型
+	MsgType            string        `json:"MsgType"`              // 消息类型 固定：event
+	Event              string        `json:"Event"`                // 事件类型 固定：retail_pay_notify
 	AppID              string        `json:"appid"`                // 小程序ID
 	Mchid              string        `json:"mchid"`                // 微信商户号
 	OutTradeNo         string        `json:"out_trade_no"`         // 商户订单号
@@ -16,8 +16,8 @@ type PaymentNotify struct {
 	Attach             string        `json:"attach"`               // 附加数据
 	PayerOpenID        string        `json:"payer_openid"`         // 支付者OpenID
 	Amount             PaymentAmount `json:"amount"`               // 订单金额信息
-	WxPayTransactionID string        `json:"wxpay_transaction_id"` // 微信支付订单号
-	Env                int           `json:"env"`                  // 订单环境
+	WxPayTransactionID string        `json:"wxpay_transaction_id"` // 微信支付订单号 合单下无
+	Env                int           `json:"env"`                  // 订单环境 1：正式；0：沙箱
 }
 
 // PaymentAmount 表示通知中的金额信息。
