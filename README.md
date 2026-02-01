@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-go get github.com/enjoy322/wechatpay-b2b
+go get github.com/wneverfade/wechatpay-b2b
 ```
 
 ## 项目定位
@@ -89,9 +89,9 @@ import (
     "context"
     "fmt"
 
-    "github.com/enjoy322/wechatpay-b2b/client"
-    "github.com/enjoy322/wechatpay-b2b/service"
-    "github.com/enjoy322/wechatpay-b2b/types"
+    "github.com/wneverfade/wechatpay-b2b/client"
+    "github.com/wneverfade/wechatpay-b2b/service"
+    "github.com/wneverfade/wechatpay-b2b/types"
 )
 
 func main() {

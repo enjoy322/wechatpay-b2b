@@ -1,6 +1,6 @@
 package types
 
-import "github.com/enjoy322/wechatpay-b2b/model"
+import "github.com/wneverfade/wechatpay-b2b/model"
 
 // ProfitSharingRequest 请求分账参数。
 type ProfitSharingRequest struct {

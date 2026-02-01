@@ -1,6 +1,6 @@
 package types
 
-import "github.com/enjoy322/wechatpay-b2b/model"
+import "github.com/wneverfade/wechatpay-b2b/model"
 
 // CloseOrderRequest 关闭订单请求参数。
 type CloseOrderRequest struct {

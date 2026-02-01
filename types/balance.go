@@ -1,6 +1,6 @@
 package types
 
-import "github.com/enjoy322/wechatpay-b2b/model"
+import "github.com/wneverfade/wechatpay-b2b/model"
 
 // BalanceRequest 余额查询请求参数。
 type BalanceRequest struct {

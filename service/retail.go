@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/enjoy322/wechatpay-b2b/client"
-	"github.com/enjoy322/wechatpay-b2b/types"
+	"github.com/wneverfade/wechatpay-b2b/client"
+	"github.com/wneverfade/wechatpay-b2b/types"
 )
 
 // RetailService 处理门店助手（wxa/business）相关接口调用。

@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/enjoy322/wechatpay-b2b/client"
-	"github.com/enjoy322/wechatpay-b2b/types"
+	"github.com/wneverfade/wechatpay-b2b/client"
+	"github.com/wneverfade/wechatpay-b2b/types"
 )
 
 // MerchantService 处理商户信息与余额相关接口调用。

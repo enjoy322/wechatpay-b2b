@@ -1,6 +1,6 @@
 package types
 
-import "github.com/enjoy322/wechatpay-b2b/model"
+import "github.com/wneverfade/wechatpay-b2b/model"
 
 // RefundRequest 退款请求参数。
 type RefundRequest struct {
